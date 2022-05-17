@@ -91,13 +91,19 @@ resource "aws_route_table_association" "routeapp" {
 }
 
 
-
 # Creating security group for webapp
 resource "aws_security_group" "sgapp" {
   name        = var.appsg
   description = var.appsgdesc
   vpc_id      = aws_vpc.mainvpc.id
 
+  ingress {
+    description = "dev port"
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   ingress {
     description = "docker machine"
     from_port = 2376
