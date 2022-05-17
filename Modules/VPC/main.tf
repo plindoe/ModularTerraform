@@ -65,7 +65,7 @@ resource "aws_route_table" "routepublic" {
 resource "aws_route_table" "routeprivate1" {
   vpc_id = aws_vpc.mainvpc.id
   route {
-    cidr_block = var.vpccidr
+    cidr_block = var.opencidr
     gateway_id = aws_internet_gateway.gw.id
   }
   tags = {
@@ -76,7 +76,7 @@ resource "aws_route_table" "routeprivate1" {
 resource "aws_route_table" "routeprivate2" {
   vpc_id = aws_vpc.mainvpc.id
   route {
-    cidr_block = var.vpccidr
+    cidr_block = var.opencidr
     gateway_id = aws_internet_gateway.gw.id
   }
   tags = {
@@ -90,15 +90,7 @@ resource "aws_route_table_association" "routeapp" {
   route_table_id = aws_route_table.routepublic.id
 }
 
-resource "aws_route_table_association" "routedb1" {
-  subnet_id = aws_subnet.subprivate1.id
-  route_table_id = aws_route_table.routeprivate1.id
-}
 
-resource "aws_route_table_association" "routedb2" {
-  subnet_id = aws_subnet.subprivate1.id
-  route_table_id = aws_route_table.routeprivate2.id
-}
 
 # Creating security group for webapp
 resource "aws_security_group" "sgapp" {
@@ -106,6 +98,34 @@ resource "aws_security_group" "sgapp" {
   description = var.appsgdesc
   vpc_id      = aws_vpc.mainvpc.id
 
+  ingress {
+    description = "docker machine"
+    from_port = 2376
+    to_port = 2376
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "cluster communication"
+    from_port = 2377
+    to_port = 2377
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "node communication"
+    from_port = 7946
+    to_port = 7946
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  ingress {
+    description = "overlay traffic"
+    from_port = 4789
+    to_port = 4789
+    protocol = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   ingress {
    description = var.httpx
    from_port = 443 
