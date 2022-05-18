@@ -9,7 +9,7 @@ resource "aws_instance" "docker_manager" {
 	subnet_id = var.subnet_id
     vpc_security_group_ids = [var.security_group_app_id]
     associate_public_ip_address = true
-	user_data = "${file("script.sh")}"
+	user_data = "${file("./script.sh")}"
     
 	 tags = {	
 		Name = "docker_manager"	
@@ -23,7 +23,7 @@ resource "aws_instance" "docker_worker" {
 	subnet_id = var.subnet_id
     vpc_security_group_ids = [var.security_group_app_id]
     associate_public_ip_address = true
-	user_data = "${file("script.sh")}"
+	user_data = "${file("./script.sh")}"
     
 	tags = {	
 		Name = "docker_worker"	
